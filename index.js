@@ -1,8 +1,8 @@
-'use strict'
+'use strict';
 
-const fs = require('fs')
-const axios = require('axios')
-const https = require('https')
+// const fs = require('fs');
+const axios = require('axios');
+const https = require('https');
 
 class BankID {
 
@@ -10,18 +10,18 @@ class BankID {
     if (!connectionOptions) {
       throw Error('Must include options')
     }
-    this.options = Object.assign({}, connectionOptions)
+    this.options = Object.assign({}, connectionOptions);
     if (!this.options.pfx || !this.options.passphrase) {
       throw Error('Certificate and passphrase are required')
     }
-    this.baseUrl = this.options.baseUrl
+    this.baseUrl = this.options.baseUrl;
     if (this.baseUrl.substr(-1) != '/') {
       this.baseUrl += '/'
     }
-    this.axios = this._createAxiosInstance()
-    this.authUrl = 'auth'
-    this.signUrl = 'sign'
-    this.collectUrl = 'collect'
+    this.axios = this._createAxiosInstance();
+    this.authUrl = 'auth';
+    this.signUrl = 'sign';
+    this.collectUrl = 'collect';
     this.cancelUrl = 'cancel'
   }
 
@@ -32,7 +32,7 @@ class BankID {
 
     const params = {
       endUserIp: data.endUserIp
-    }
+    };
 
     if (data.personalNumber) {
       params.personalNumber = data.personalNumber;
@@ -50,7 +50,7 @@ class BankID {
       endUserIp: data.endUserIp,
       personalNumber: data.personalNumber,
       userVisibleData: data.userVisibleData
-    }
+    };
 
     if (data.userNonVisibleData) {
       params = Object.assign({}, params, { userNonVisibleData: data.userNonVisibleData })
@@ -65,7 +65,7 @@ class BankID {
     }
     const params = {
       orderRef
-    }
+    };
     return this.axios.post(this.baseUrl.concat(this.collectUrl), params)
   }
 
@@ -75,14 +75,14 @@ class BankID {
     }
     const params = {
       orderRef
-    }
+    };
     return this.axios.post(this.baseUrl.concat(this.cancelUrl), params)
   }
 
   _createAxiosInstance() {
-    const ca = fs.readFileSync(this.options.ca, 'utf-8')
-    const pfx = fs.readFileSync(this.options.pfx)
-    const passphrase = this.options.passphrase
+    const ca = this.options.ca; //fs.readFileSync(this.options.ca, 'utf-8');
+    const pfx = this.options.pfx; //fs.readFileSync(this.options.pfx);
+    const passphrase = this.options.passphrase;
     return axios.create({
       httpsAgent: new https.Agent({ pfx, passphrase, ca }),
       headers: {
@@ -92,4 +92,4 @@ class BankID {
   }
 }
 
-module.exports = BankID
+module.exports = BankID;
